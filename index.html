@@ -1046,7 +1046,6 @@
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
-            style=""
           ></button>
           <p>hello</p>
         </div>
@@ -1092,25 +1091,26 @@
         }
       });
 
-      function randomNotification() {
-        // const randomItem = Math.floor(Math.random() * games.length);
-        // const notifTitle = games[randomItem].name;
-        // const notifBody = `Created by ${games[randomItem].author}.`;
-        // const notifImg = `data/img/${games[randomItem].slug}.jpg`;
-        // const options = {
-        //   body: notifBody,
-        //   icon: notifImg,
-        // };
-        // new Notification(notifTitle, options);
-        new Notification("Congratulations", { body: "You have achived 1000 mintues of video call", icon : "./logo.svg" });
-        setTimeout(randomNotification, 5000);
-      }
+      // function randomNotification() {
+      //   // const randomItem = Math.floor(Math.random() * games.length);
+      //   // const notifTitle = games[randomItem].name;
+      //   // const notifBody = `Created by ${games[randomItem].author}.`;
+      //   // const notifImg = `data/img/${games[randomItem].slug}.jpg`;
+      //   // const options = {
+      //   //   body: notifBody,
+      //   //   icon: notifImg,
+      //   // };
+      //   // new Notification(notifTitle, options);
+      //   new Notification("Congratulations", { body: "You have achived 1000 mintues of video call", icon : "./logo.svg" });
+      //   setTimeout(randomNotification, 5000);
+      // }
 
       const button = document.getElementById("notifications");
       button.addEventListener("click", () => {
         Notification.requestPermission().then((result) => {
           if (result === "granted") {
-            randomNotification();
+            // randomNotification();
+            new Notification("Congratulations", { body: "You have achived 1000 mintues of video call", icon : "./logo.svg" });
           }
         });
       });
