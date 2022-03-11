@@ -41,8 +41,7 @@
     />
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
     <style>
-
-      body{
+      body {
         user-select: none;
       }
 
@@ -1057,7 +1056,12 @@
       </div>
     </div>
     <!-- pwa -->
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/push.js/1.0.12/push.min.js"
+      integrity="sha512-DjIQO7OxE8rKQrBLpVCk60Zu0mcFfNx2nVduB96yk5HS/poYZAkYu5fxpwXj3iet91Ezqq2TNN6cJh9Y5NtfWg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
       integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
@@ -1111,16 +1115,31 @@
       // }
 
       const button = document.getElementById("notifications");
+      // button.addEventListener("click", () => {
+      //   Notification.requestPermission().then((result) => {
+      //     if (result === "granted") {
+      //       // randomNotification();
+      //       new Notification("Congratulations", { body: "You have achived 1000 mintues of video call", icon : "./logo.svg" });
+      //     }
+      //   });
+      // });
       button.addEventListener("click", () => {
         Notification.requestPermission().then((result) => {
           if (result === "granted") {
             // randomNotification();
-            new Notification("Congratulations", { body: "You have achived 1000 mintues of video call", icon : "./logo.svg" });
+            Push.create("Congratulations!", {
+              body: "You have achived 1000 mintues of video call",
+              icon: "./icons/apple-icon-180.png",
+              timeout: 4000,
+              onClick: function () {
+                window.focus();
+                this.close();
+              },
+            });
           }
         });
       });
 
-      
       // pwa end
 
       function showBarsPopup() {
