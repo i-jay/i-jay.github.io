@@ -1,130 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
-
+  <meta charset="utf-8">
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-
-  <title>Test Try on</title>
-  <style>
-    .my-modal {
-      height: 100vh;
-      width: 100vw;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .my-modal-body {
-      height: 80%;
-      width: 80%;
-    }
-
-    .tryon-area canvas {
-      border-radius: 10px;
-      height: 100%;
-      width: 100%;
-      border: 1px solid #f0f0f0f7;
-      object-fit: cover;
-    }
-
-    .tryon-area video {
-      border-radius: 10px;
-      height: 100%;
-      width: 100%;
-      border: 1px solid #f0f0f0f7;
-      object-fit: cover;
-    }
-
-    .collection-area {
-      border: 1px solid #f0f0f0f7;
-      border-radius: 10px;
-    }
-
-    .jewel-item {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 140px;
-      width: 140px;
-      padding: 10px;
-      border: 1px solid #f0f0f0f7;
-      box-shadow: 0 5px 20px 0 #0000000c;
-      cursor: pointer;
-    }
-
-    .jewel-item img {
-      height: 100px;
-      width: 100px;
-      object-fit: contain;
-    }
-  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-  <div class="my-modal">
-    <div class="my-modal-body">
-      <div class="row h-100 w-100 mx-0">
-        <div class="col-8 h-100">
-          <div class="tryon-area h-100 w-100" id="tryon_area">
-            <video id="input_video" class=""></video>
-            <video id="input_video2" class="d-none"></video>
-            <canvas id="output_canvas" class="d-none" width="1280" height="720"></canvas>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="collection-area h-100 w-100">
-            <div class="jewel-items">
-              <div class="row mx-0 p-2">
-                <div class="col col-6 d-flex justify-content-center" onclick="tryon(this.id)" id="necklace">
-                  <div class="jewel-item">
-                    <img src="./assets/necklace.png" alt="" srcset="" />
-                  </div>
-                </div>
-                <div class="col col-6 d-flex justify-content-center" onclick="tryon(this.id)" id="set">
-                  <div class="jewel-item">
-                    <img src="./assets/set_full.png" alt="" srcset="" />
-                  </div>
-                </div>
-              </div>
-              <div class="row mx-0 p-2">
-                <div class="col col-6 d-flex justify-content-center" onclick="tryon(this.id)" id="earring">
-                  <div class="jewel-item">
-                    <img src="./assets/earring.png" alt="" srcset="" />
-                  </div>
-                </div>
-                <div class="col col-6 d-flex justify-content-center" onclick="tryon(this.id)" id="ring">
-                  <div class="jewel-item">
-                    <img src="./assets/ring.png" alt="" srcset="" />
-                  </div>
-                </div>
-              </div>
-              <div class="row mx-0 p-2">
-                <div class="col col-6 d-flex justify-content-center" onclick="tryon(this.id)" id="bracelet">
-                  <div class="jewel-item">
-                    <img src="./assets/bracelet.png" alt="" srcset="" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="container">
+    <video class="input_video" style="display: none;"></video>
+    <canvas class="output_canvas" width="1280px" height="720px"></canvas>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-    crossorigin="anonymous"></script>
-    <script src="./script.js"></script>
+  <script type="module">
+    const videoElement = document.getElementsByClassName('input_video')[0];
+    const canvasElement = document.getElementsByClassName('output_canvas')[0];
+    const canvasCtx = canvasElement.getContext('2d');
+    
+    function onResults(results) {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(results.segmentationMask, 0, 0,
+                          canvasElement.width, canvasElement.height);
+    
+      // Only overwrite existing pixels.
+      canvasCtx.globalCompositeOperation = 'source-in';
+      canvasCtx.fillStyle = '#00000000';
+      canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+    
+      // Only overwrite missing pixels.
+      canvasCtx.globalCompositeOperation = 'destination-atop';
+      canvasCtx.drawImage(
+          results.image, 0, 0, canvasElement.width, canvasElement.height);
+    
+      canvasCtx.globalCompositeOperation = 'source-over';
+      drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
+                     {color: '#00FF00', lineWidth: 4});
+      drawLandmarks(canvasCtx, results.poseLandmarks,
+                    {color: '#FF0000', lineWidth: 2});
+      drawConnectors(canvasCtx, results.faceLandmarks, FACEMESH_TESSELATION,
+                     {color: '#C0C0C070', lineWidth: 1});
+      drawConnectors(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS,
+                     {color: '#CC0000', lineWidth: 5});
+      drawLandmarks(canvasCtx, results.leftHandLandmarks,
+                    {color: '#00FF00', lineWidth: 2});
+      drawConnectors(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS,
+                     {color: '#00CC00', lineWidth: 5});
+      drawLandmarks(canvasCtx, results.rightHandLandmarks,
+                    {color: '#FF0000', lineWidth: 2});
+      canvasCtx.restore();
+    }
+    
+    const holistic = new Holistic({locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
+    }});
+    holistic.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: true,
+      smoothSegmentation: true,
+      refineFaceLandmarks: true,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+    holistic.onResults(onResults);
+    
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        await holistic.send({image: videoElement});
+      },
+      width: 1280,
+      height: 720
+    });
+    camera.start();
+    </script>
 </body>
-
 </html>
